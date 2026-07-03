@@ -19,8 +19,15 @@ export default function AddRestaurantModal({ onClose, onAdd }) {
     }));
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
     onAdd({
       ...form,
       id: crypto.randomUUID(),

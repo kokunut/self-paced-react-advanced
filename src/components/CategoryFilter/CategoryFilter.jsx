@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { useContext } from "react";
-import { CategoryContext } from "../../context/CategoryContext";
+import { useCategoryStore } from "../../store/useCategoryStore";
 import { FILTER_CATEGORIES } from "../../RestaurantData";
 
 export default function CategoryFilter() {
-  const { category, setCategory } = useContext(CategoryContext);
+  const category = useCategoryStore((state) => state.category);
+  const setCategory = useCategoryStore((state) => state.setCategory);
 
   return (
     <FilterContainer>

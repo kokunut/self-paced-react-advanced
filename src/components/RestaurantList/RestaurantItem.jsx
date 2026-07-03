@@ -23,6 +23,11 @@ const RestaurantLi = styled.li`
   padding: 16px 8px;
 
   border-bottom: 1px solid #e9eaed;
+
+  cursor: pointer;
+  &:hover {
+    background-color: #f9fafb;
+  }
 `;
 
 const RestaurantCategory = styled.div`
