@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 import Header from "./components/Header/Header";
 import CategoryFilter from "./components/CategoryFilter/CategoryFilter";
 import RestaurantList from "./components/RestaurantList/RestaurantList";
 import RestaurantDetailModal from "./components/RestaurantDetailModal/RestaurantDetailModal";
 import AddRestaurantModal from "./components/AddRestaurantModal/AddRestaurantModal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const BASE_URL = "http://localhost:3000/restaurants";
 
 function App() {
+  const queryClient = useQueryClient();
   const {
     isPending,
     error,
@@ -25,8 +26,8 @@ function App() {
 
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
-  const handleAddRestaurant = async (newRestaurant) => {
-    try {
+  const addRestaurantMutation = useMutation({
+    mutationFn: async (newRestaurant) => {
       const res = await fetch(BASE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,14 +36,21 @@ function App() {
 
       if (!res.ok) {
         throw new Error("서버에 식당을 추가하는 데 실패했습니다.");
+        return res.json();
       }
-
-      window.location.reload();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["restaurants"] });
       setIsAddModalOpen(false);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       alert("음식점을 추가하는 중 오류가 발생했습니다. 다시 시도해 주세요.");
-    }
+    },
+  });
+
+  const handleAddRestaurant = (newRestaurant) => {
+    addRestaurantMutation.mutate(newRestaurant);
   };
 
   const handleOpenModal = (item) => {
