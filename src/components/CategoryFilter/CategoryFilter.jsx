@@ -1,81 +1,47 @@
-import PropTypes from "prop-types";
 import styled from "styled-components";
-import { CATEGORY_IMAGE } from "../../RestaurantData";
+import { useCategoryStore } from "../../store/useCategoryStore";
+import { FILTER_CATEGORIES } from "../../RestaurantData";
 
-export default function RestaurantItem({ item, onOpenModal }) {
+export default function CategoryFilter() {
+  const category = useCategoryStore((state) => state.category);
+  const setCategory = useCategoryStore((state) => state.setCategory);
+
   return (
-    <RestaurantLi onClick={() => onOpenModal(item)}>
-      <RestaurantCategory>
-        <CategoryIcon src={CATEGORY_IMAGE[item.category]} alt={item.category} />
-      </RestaurantCategory>
-      <RestaurantInfo>
-        <RestaurantName>{item.name}</RestaurantName>
-        <Description>{item.description}</Description>
-      </RestaurantInfo>
-    </RestaurantLi>
+    <FilterContainer>
+      <CategorySelect
+        name="category"
+        id="category-filter"
+        aria-label="음식점 카테고리 필터"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      >
+        {FILTER_CATEGORIES.map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
+      </CategorySelect>
+    </FilterContainer>
   );
 }
 
-const RestaurantLi = styled.li`
+const FilterContainer = styled.section`
   display: flex;
-  align-items: flex-start;
+  justify-content: space-between;
 
-  padding: 16px 8px;
-
-  border-bottom: 1px solid #e9eaed;
-
-  cursor: pointer;
-  &:hover {
-    background-color: #f9fafb;
-  }
+  padding: 0 16px;
+  margin-top: 24px;
 `;
 
-const RestaurantCategory = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 64px;
-  height: 64px;
-  min-width: 64px;
-  min-height: 64px;
+const CategorySelect = styled.select`
+  height: 44px;
+  min-width: 125px;
 
-  margin-right: 16px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: transparent;
 
-  border-radius: 50%;
-  background: var(--lighten-color);
+  font-size: 16px;
+
+  padding: 8px;
 `;
-
-const CategoryIcon = styled.img`
-  width: 36px;
-  height: 36px;
-`;
-
-const RestaurantInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-
-const RestaurantName = styled.h3`
-  margin: 0;
-`;
-
-const Description = styled.p`
-  display: -webkit-box;
-
-  padding-top: 8px;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-`;
-
-RestaurantItem.propTypes = {
-  item: PropTypes.shape({
-    category: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-  }).isRequired,
-  onOpenModal: PropTypes.func.isRequired,
-};

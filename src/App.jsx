@@ -5,38 +5,25 @@ import CategoryFilter from "./components/CategoryFilter/CategoryFilter";
 import RestaurantList from "./components/RestaurantList/RestaurantList";
 import RestaurantDetailModal from "./components/RestaurantDetailModal/RestaurantDetailModal";
 import AddRestaurantModal from "./components/AddRestaurantModal/AddRestaurantModal";
+import { useQuery } from "@tanstack/react-query";
 
 const BASE_URL = "http://localhost:3000/restaurants";
 
 function App() {
-  const [restaurants, setRestaurants] = useState([]);
+  const {
+    isPending,
+    error,
+    data: restaurants = [],
+  } = useQuery({
+    queryKey: ["restaurants"],
+    queryFn: () => fetch(BASE_URL).then((res) => res.json()),
+  });
 
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-
-  const fetchRestaurants = async () => {
-    try {
-      const response = await fetch(BASE_URL);
-
-      if (!response.ok) {
-        throw new Error("서버 요청 실패");
-      }
-
-      const data = await response.json();
-      setRestaurants(data);
-    } catch (error) {
-      console.error(error);
-
-      alert("음식점 목록을 불러오는 데 실패했습니다.");
-    }
-  };
-
-  useEffect(() => {
-    fetchRestaurants();
-  }, []);
 
   const handleAddRestaurant = async (newRestaurant) => {
     try {
@@ -50,8 +37,7 @@ function App() {
         throw new Error("서버에 식당을 추가하는 데 실패했습니다.");
       }
 
-      await fetchRestaurants();
-
+      window.location.reload();
       setIsAddModalOpen(false);
     } catch (error) {
       console.error(error);
@@ -63,6 +49,9 @@ function App() {
     setSelectedRestaurant(item);
     setIsDetailModalOpen(true);
   };
+
+  if (isPending) return "Loading...";
+  if (error) return "An error has occurred: " + error.message;
 
   return (
     <>
