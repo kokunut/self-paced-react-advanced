@@ -1,74 +1,81 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { UseCategoryStore } from "../../store/useCategoryStore";
-import { FILTER_CATEGORIES } from "../../RestaurantData";
+import { CATEGORY_IMAGE } from "../../RestaurantData";
 
-export default function CategoryFilter() {
-  const category = UseCategoryStore((state) => state.category);
-  const setCategory = UseCategoryStore((state) => state.setCategory);
-=======
-import { useCategoryStore } from "../../store/useCategoryStore";
-import { FILTER_CATEGORIES } from "../../RestaurantData";
-
-export default function CategoryFilter() {
-  const category = useCategoryStore((state) => state.category);
-  const setCategory = useCategoryStore((state) => state.setCategory);
->>>>>>> 146db27 (refactor: CategoryFilter 및 RestaurantList 컴포넌트 Zustand 연동)
-=======
-import { UseCategoryStore } from "../../store/UseCategoryStore";
-import { FILTER_CATEGORIES } from "../../RestaurantData";
-
-export default function CategoryFilter() {
-  const category = UseCategoryStore((state) => state.category);
-  const setCategory = UseCategoryStore((state) => state.setCategory);
->>>>>>> 67818a5 (fix: 스토어 임포트 경로 대소문자 불일치 수정 및 누락된 의존성 추가)
-=======
-import { useCategoryStore } from "../../store/useCategoryStore";
-import { FILTER_CATEGORIES } from "../../RestaurantData";
-
-export default function CategoryFilter() {
-  const category = useCategoryStore((state) => state.category);
-  const setCategory = useCategoryStore((state) => state.setCategory);
->>>>>>> 8d5072d (refactor: 커스텀 훅 네이밍 컨벤션 적용 및 파일 충돌 해결)
-
+export default function RestaurantItem({ item, onOpenModal }) {
   return (
-    <FilterContainer>
-      <CategorySelect
-        name="category"
-        id="category-filter"
-        aria-label="음식점 카테고리 필터"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      >
-        {FILTER_CATEGORIES.map((item) => (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        ))}
-      </CategorySelect>
-    </FilterContainer>
+    <RestaurantLi onClick={() => onOpenModal(item)}>
+      <RestaurantCategory>
+        <CategoryIcon src={CATEGORY_IMAGE[item.category]} alt={item.category} />
+      </RestaurantCategory>
+      <RestaurantInfo>
+        <RestaurantName>{item.name}</RestaurantName>
+        <Description>{item.description}</Description>
+      </RestaurantInfo>
+    </RestaurantLi>
   );
 }
 
-const FilterContainer = styled.section`
+const RestaurantLi = styled.li`
   display: flex;
-  justify-content: space-between;
+  align-items: flex-start;
 
-  padding: 0 16px;
-  margin-top: 24px;
+  padding: 16px 8px;
+
+  border-bottom: 1px solid #e9eaed;
+
+  cursor: pointer;
+  &:hover {
+    background-color: #f9fafb;
+  }
 `;
 
-const CategorySelect = styled.select`
-  height: 44px;
-  min-width: 125px;
+const RestaurantCategory = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
 
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  background: transparent;
+  margin-right: 16px;
 
-  font-size: 16px;
-
-  padding: 8px;
+  border-radius: 50%;
+  background: var(--lighten-color);
 `;
+
+const CategoryIcon = styled.img`
+  width: 36px;
+  height: 36px;
+`;
+
+const RestaurantInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
+
+const RestaurantName = styled.h3`
+  margin: 0;
+`;
+
+const Description = styled.p`
+  display: -webkit-box;
+
+  padding-top: 8px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`;
+
+RestaurantItem.propTypes = {
+  item: PropTypes.shape({
+    category: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+  }).isRequired,
+  onOpenModal: PropTypes.func.isRequired,
+};
