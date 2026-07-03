@@ -36,8 +36,8 @@ function App() {
 
       if (!res.ok) {
         throw new Error("서버에 식당을 추가하는 데 실패했습니다.");
-        return res.json();
       }
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["restaurants"] });
