@@ -34,7 +34,30 @@ function App() {
     setIsDetailModalOpen(true);
   };
 
-  if (isPending) return "Loading...";
+  if (isPending) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <div
+          className="loading-spinner"
+          style={{
+            width: "32px",
+            height: "32px",
+            border: "4px solid #e5e7eb",
+            borderTop: "4px solid #3b82f6",
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite",
+          }}
+        />
+      </div>
+    );
+  }
   if (error) return "An error has occurred: " + error.message;
 
   return (
